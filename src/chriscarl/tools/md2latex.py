@@ -6,10 +6,10 @@ Email:          chrisbcarl@outlook.com
 Date:           2026-01-25
 Description:
 
-tools.academia is a tool which... TODO: lorem ipsum
+tools.md2latex is a tool which... TODO: lorem ipsum
 
 Updates:
-    2026-01-25 - tools.academia - initial commit
+    2026-01-25 - tools.md2latex - initial commit
 '''
 
 # stdlib imports
@@ -29,7 +29,7 @@ from chriscarl.core.lib.stdlib.logging import NAME_TO_LEVEL, configure_ez
 from chriscarl.core.lib.stdlib.argparse import ArgparseNiceFormat
 from chriscarl.core.lib.stdlib.os import abspath, make_dirpath
 
-SCRIPT_RELPATH = 'chriscarl/tools/academia.py'
+SCRIPT_RELPATH = 'chriscarl/tools/md2latex.py'
 if not hasattr(sys, '_MEIPASS'):
     SCRIPT_FILEPATH = os.path.abspath(__file__)
 else:
@@ -42,8 +42,8 @@ LOGGER.addHandler(logging.NullHandler())
 
 # argument defaults
 DEFAULT_FIB_INIT = [0, 1]
-DEFAULT_OUTPUT_DIRPATH = abspath(TEMP_DIRPATH, 'tools.academia')
-DEFAULT_LOG_FILEPATH = abspath(TEMP_DIRPATH, 'tools.academia.log')
+DEFAULT_OUTPUT_DIRPATH = abspath(TEMP_DIRPATH, 'tools.md2latex')
+DEFAULT_LOG_FILEPATH = abspath(TEMP_DIRPATH, 'tools.md2latex.log')
 
 # tool constants
 
@@ -145,3 +145,89 @@ def main():
 
 if __name__ == '__main__':
     sys.exit(main())
+'''
+Definition:
+    - label: a name/label for something ON the doc/bib
+    - ref: a reference to a label
+    - citation: a ref to a bibliography label
+
+Shape of the algorithm:
+
+# clean the bibliography
+    bibliography = read bibliography
+    bibtex content = extract bibtex content
+    bib-labels = extract all keys
+    clean the bibtex content so that it will render correctly
+    if any cleaning occurred, copy a new bibfile
+    else, use current bibfile
+    TODO: test that it renders correctly by doing a dummy documenet
+
+# annotate the markdown
+    BAD unicode replace
+
+    sections = []
+    header_locations = re.find(#+)
+        section.append(pre-amble section is before the first mo)
+        sections.extend(ranges from each.)
+
+    errors = []
+    doclets = [
+        ('yaml', '---asdf: whatever---', spellcheck='')
+        ('plain', 'asdfasdfasdf', spellcheck='asdfasdf')
+        ('comment', '---asdf: whatever---', spellcheck='')
+        ('table', '|||', caption='capt', label='asdf', spellcheck='')
+        ...
+        ('header', 'introduction', label='introduction', spellcheck='introduction')
+        ...
+        ('header', 'introduction', label='introduction', spellcheck='introduction', appendix=True)
+    ]
+    appendix = False
+    doc-labels-existing = {}
+    doc-refs-requested = []
+    for section in sections:
+        def analyze_section:
+            header? add that to the labels
+                if appendix
+            errors:
+                naked hyperlinks? warn that it must be enclosed
+            extract and remove and parse:
+                yaml?
+            note the range:
+                # blocks
+                    # may also include refs other blocks or inlines...
+                        list?
+                        image?
+                            path exists, downloaded or downloadable?
+                        table?
+                            properly captioned, reffed?
+                    # cannot include refs
+                        comments?
+                        latex double?
+                        code/backticks?
+                # inline
+                    backticks?
+                    latex single?
+                    citations?
+                        if interdoc, do they have the pref?
+
+    for ref in doc-refs-requested:
+        if ref not in doc-labels-existing:
+            add to errors
+    if errors:
+        ref errors
+
+    yaml = extract yaml section
+
+# wordcount the markdown
+    markdown = read markdown
+    if wordcount:
+        print a best word count and return
+
+# spellcheck if asked
+
+# render the content
+    according to yaml
+    for doc in doclets
+        get latex
+    append to body/appendix
+'''
