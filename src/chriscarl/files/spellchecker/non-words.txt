@@ -1,0 +1,12 @@
+# abbreviations
+pp
+Fig
+Eq
+
+# extensions
+jpg
+png
+txt
+mp3
+mov
+mkv

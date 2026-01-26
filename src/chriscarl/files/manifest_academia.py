@@ -1,0 +1,50 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+'''
+Author:         Chris Carl
+Email:          chrisbcarl@outlook.com
+Date:           2026-01-25
+Description:
+
+files.manifest_academia is literally what it says on the tin
+files are modules that elevate files so they can be used in python, either registering the path name or actually interacting with them like data cabinets.
+
+Updates:
+    2026-01-25 - files.manifest_academia - initial commit
+'''
+
+# stdlib imports
+from __future__ import absolute_import, print_function, division, with_statement  # , unicode_literals
+import os
+import sys
+import logging
+
+# third party imports
+
+# project imports
+
+SCRIPT_RELPATH = 'chriscarl/files/manifest_academia.py'
+if not hasattr(sys, '_MEIPASS'):
+    SCRIPT_FILEPATH = os.path.abspath(__file__)
+else:
+    SCRIPT_FILEPATH = os.path.abspath(os.path.join(sys._MEIPASS, SCRIPT_RELPATH))  # pylint: disable=no-member
+SCRIPT_DIRPATH = os.path.dirname(SCRIPT_FILEPATH)
+SCRIPT_NAME = os.path.splitext(os.path.basename(__file__))[0]
+THIS_MODULE = sys.modules[__name__]
+LOGGER = logging.getLogger(__name__)
+LOGGER.addHandler(logging.NullHandler())
+
+# ###
+
+# ./
+DIRPATH_ROOT = SCRIPT_DIRPATH
+FILEPATH_MANIFEST_ACADEMIA_PY = os.path.join(DIRPATH_ROOT, 'manifest_academia.py')
+
+# ./spellchecker
+DIRPATH_SPELLCHECKER = os.path.join(SCRIPT_DIRPATH, './spellchecker')
+FILEPATH_ACRONYMS = os.path.join(DIRPATH_SPELLCHECKER, 'acronyms.txt')
+FILEPATH_DICTIONARY = os.path.join(DIRPATH_SPELLCHECKER, 'dictionary.txt')
+FILEPATH_NAMES = os.path.join(DIRPATH_SPELLCHECKER, 'names.txt')
+FILEPATH_NON_WORDS = os.path.join(DIRPATH_SPELLCHECKER, 'non-words.txt')
+
+# ###

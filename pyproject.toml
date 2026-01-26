@@ -80,7 +80,7 @@ homepage = "https://chriscarl.com"
 
 
 [tool.poetry.scripts]
-# dev = 'chriscarl.tools.dev:main'
+md2bibtex = 'chriscarl.tools.md2bibtex:main'
 
 
 # poetry add package
