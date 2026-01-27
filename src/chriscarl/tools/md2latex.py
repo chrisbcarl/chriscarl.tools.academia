@@ -28,6 +28,7 @@ from chriscarl.core.constants import TEMP_DIRPATH
 from chriscarl.core.lib.stdlib.logging import NAME_TO_LEVEL, configure_ez
 from chriscarl.core.lib.stdlib.argparse import ArgparseNiceFormat
 from chriscarl.core.lib.stdlib.os import abspath, make_dirpath
+from chriscarl.tools.shed.md2latex import assert_executables_exist
 
 SCRIPT_RELPATH = 'chriscarl/tools/md2latex.py'
 if not hasattr(sys, '_MEIPASS'):
@@ -46,26 +47,6 @@ DEFAULT_OUTPUT_DIRPATH = abspath(TEMP_DIRPATH, 'tools.md2latex')
 DEFAULT_LOG_FILEPATH = abspath(TEMP_DIRPATH, 'tools.md2latex.log')
 
 # tool constants
-
-
-def fast_fib(n, debug=False, a=0, b=1):
-    # type: (int, bool, int, int) -> Generator[int, None, None]
-    if debug:
-        LOGGER.debug('a = %s; b = %s', a, b)
-    yield 0
-    yield 1
-    for i in range(3, n + 1):  # because we're calculating the 3rd number
-        c = a + b
-        if debug:
-            LOGGER.debug('a = %s; b = %s; c = %s; i = %s', a, b, c, i)
-        yield c
-        a = b
-        b = c
-        if debug:
-            LOGGER.debug('\tafter swapping c, b, a...')
-            LOGGER.debug('\ta = %s; b = %s; c = %s; i = %s', a, b, c, i)
-    if debug:
-        LOGGER.debug('finished %s steps!', n)
 
 
 @dataclass
@@ -123,24 +104,10 @@ def main():
         sys.exit(1)
 
     args = Arguments.parse(parser=parser)
-    numbers = []
-    for fib in fast_fib(args.n, debug=args.debug, a=args.init[0], b=args.init[1]):
-        numbers.append(fib)
+    assert_executables_exist()
+    print('exist')
 
-    if args.debug:
-        LOGGER.debug('numbers: %s', numbers)
-    LOGGER.info(numbers[-1])
-
-    if args.messages:
-        with open(abspath(args.output_dirpath, 'out'), 'w', encoding='utf-8') as w:
-            for i in range(args.times):
-                for m, message in enumerate(args.messages):
-                    LOGGER.info('%d - %d - %s', i, m, message)
-                    # cannot use braces since this is a template, lol, such a headache
-                    w.write(message + '\n')  # type: ignore
-
-    LOGGER.info('fib: %s', fib)
-    return fib
+    return 0
 
 
 if __name__ == '__main__':
