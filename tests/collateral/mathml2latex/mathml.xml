@@ -1,0 +1,55 @@
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block" overflow="scroll">
+  <mover accent="true">
+    <mi>x</mi>
+    <mo>&#x203E;</mo>
+  </mover>
+  <mo>=</mo>
+  <mfrac>
+    <mrow>
+      <mrow>
+        <msub>
+          <mi>x</mi>
+          <mn>1</mn>
+        </msub>
+        <mo>+</mo>
+        <mrow>
+          <msub>
+            <mi>x</mi>
+            <mn>2</mn>
+          </msub>
+          <mo>+</mo>
+        </mrow>
+      </mrow>
+      <mtext>&#x22EF;</mtext>
+      <mrow>
+        <mo>+</mo>
+        <msub>
+          <mi>x</mi>
+          <mi>n</mi>
+        </msub>
+      </mrow>
+    </mrow>
+    <mi>n</mi>
+  </mfrac>
+  <mo>=</mo>
+  <mfrac>
+    <mrow>
+      <mstyle displaystyle="true">
+        <munderover>
+          <mo>&#x2211;</mo>
+          <mrow>
+            <mi>i</mi>
+            <mo>=</mo>
+            <mn>1</mn>
+          </mrow>
+          <mi>n</mi>
+        </munderover>
+      </mstyle>
+      <msub>
+        <mi>x</mi>
+        <mi>i</mi>
+      </msub>
+    </mrow>
+    <mi>n</mi>
+  </mfrac>
+</math>

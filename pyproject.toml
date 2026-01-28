@@ -81,6 +81,7 @@ homepage = "https://chriscarl.com"
 
 [tool.poetry.scripts]
 md2bibtex = 'chriscarl.tools.md2bibtex:main'
+mathml2latex = 'chriscarl.tools.mathml2latex:main'
 
 
 # poetry add package
@@ -92,6 +93,7 @@ colorama = "^0.4.6"
 pandas = "^3.0.0"
 lxml = "^6.0.2"
 requests = "^2.32.5"
+mathml-to-latex = "^1.0.0"
 
 
 [tool.poetry.group.dev.dependencies]  # poetry add package --group dev

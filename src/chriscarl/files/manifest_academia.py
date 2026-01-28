@@ -47,4 +47,8 @@ FILEPATH_DICTIONARY = os.path.join(DIRPATH_SPELLCHECKER, 'dictionary.txt')
 FILEPATH_NAMES = os.path.join(DIRPATH_SPELLCHECKER, 'names.txt')
 FILEPATH_NON_WORDS = os.path.join(DIRPATH_SPELLCHECKER, 'non-words.txt')
 
+# ./mathml2latex
+DIRPATH_MATHML2LATEX = os.path.join(SCRIPT_DIRPATH, './mathml2latex')
+FILEPATH_MATHML2LATEX_TEMPLATE = os.path.join(DIRPATH_MATHML2LATEX, 'template.tex')
+
 # ###
