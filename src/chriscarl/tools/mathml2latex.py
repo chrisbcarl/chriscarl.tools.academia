@@ -41,6 +41,7 @@ from chriscarl.core.lib.stdlib.argparse import ArgparseNiceFormat
 from chriscarl.core.lib.stdlib.os import abspath, make_dirpath, dirpath, as_posix
 from chriscarl.core.lib.stdlib.io import read_text_file, write_text_file
 import chriscarl.files.manifest_academia as ma
+from chriscarl.core.lib.stdlib.subprocess import run
 
 SCRIPT_RELPATH = 'chriscarl/tools/mathml2latex.py'
 if not hasattr(sys, '_MEIPASS'):
@@ -105,6 +106,8 @@ class Arguments:
 
 BAD_HOMBRES = {
     '⋯': r'\cdots',
+    r'\overset{\overline}': r'\bar',
+    r'&': r'',  # not worth the headache
 }
 
 
@@ -132,6 +135,7 @@ def main():
         print(type(template))
         output_dirpath = dirpath(args.output_filepath)
         filename = os.path.splitext(args.output_filepath)[0]
+        output_pdf_filepath = f'{filename}.pdf'
         compile = f'pdflatex {as_posix(filename)} -output-directory="{as_posix(output_dirpath)}"'
         body = '\n'.join(f'\\begin{{math}}\n    {latex}\n\\end{{math}}\n' for latex in latexes)
 
@@ -139,7 +143,13 @@ def main():
         render = render.replace('<BODY>', body)
         write_text_file(args.output_filepath, render)
         LOGGER.info('wrote "%s"', args.output_filepath)
-        LOGGER.info('compile with: %s', compile)
+        LOGGER.info('compiling with: %s', compile)
+        rc, stdout = run(compile)
+        if rc != 0:
+            LOGGER.error('failed to compile!')
+            LOGGER.warning(stdout)
+        else:
+            LOGGER.info('pdf at "%s"', output_pdf_filepath)
     else:
         for latex in latexes:
             print(f'{latex}\n')
