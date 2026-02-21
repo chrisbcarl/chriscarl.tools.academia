@@ -61,7 +61,7 @@ ignore_missing_imports = true
 
 [tool.poetry]
 repository = "https://github.com/chrisbcarl/chriscarl.tools.academia"
-package-mode = false
+package-mode = true
 packages = [
     # https://python-poetry.org/docs/pyproject/#packages
     {include = "chriscarl", from = "src"}
@@ -80,7 +80,7 @@ homepage = "https://chriscarl.com"
 
 
 [tool.poetry.scripts]
-# dev = 'chriscarl.tools.dev:main'
+academia = 'chriscarl.tools.academia:main'
 
 
 # poetry add package

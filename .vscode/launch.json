@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python Debugger: Current File",
+            "name": "debug: Python",
             "type": "debugpy",
             "request": "launch",
             "program": "${file}",
@@ -13,39 +13,15 @@
             "justMyCode": false,
         },
         {
-            // https://stackoverflow.com/questions/61701704/vs-code-c-debugging
-            // https://code.visualstudio.com/docs/cpp/launch-json-reference
-            // https://stackoverflow.com/a/66541333
-            "name": "g++.exe - build and debug active",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/dist/${fileBasenameNoExtension}",
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": false,
-            // "MIMode": "gdb",
-            // "miDebuggerPath": "C:\\ProgramData\\mingw64\\mingw64\\bin\\g++.exe",
-            "setupCommands": [
-                {
-                    "description": "enable pretty print",
-                    "text": "--enable-pretty-printing",
-                    "ignoreFailures": true,
-                }
-            ],
-            "preLaunchTask": "C/C++: g++ build active file",
-        },
-        {
-            "name": "[project] new",
+            "name": "[academia] config set",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/scripts/project.py",
+            "program": "${workspaceFolder}/src/chriscarl/tools/academia.py",
             "console": "integratedTerminal",
             "args": [
-                "new",
-                "test", "custom test description",
-                "--dirpath", "/temp"
-                // "${command:pickArgs}"
+                "config", "default", "year=2026", "semester=Spring",
+                "config", "set", "cmpe-180c", "year=2024", "--inactive",
+                // "--config-filepath", "ignoreme/config.json",
             ],
             "justMyCode": true,
         },
