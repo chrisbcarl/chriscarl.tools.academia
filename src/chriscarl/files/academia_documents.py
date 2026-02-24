@@ -6,10 +6,11 @@ Email:          chrisbcarl@outlook.com
 Date:           2026-02-20
 Description:
 
-files.academia_documents is... TODO: lorem ipsum
+files.academia_documents is a manifest for all kinds of academia style documents
 files are modules that elevate files so they can be used in python, either registering the path name or actually interacting with them like data cabinets.
 
 Updates:
+    2026-02-23 - files.academia_documents - added homework.md and notebook.ipynb
     2026-02-20 - files.academia_documents - initial commit
 '''
 
@@ -42,4 +43,6 @@ FILEPATH_ACADEMIA_DOCUMENTS_PY = os.path.join(DIRPATH_ROOT, 'academia_documents.
 
 # ./academia
 DIRPATH_ACADEMIA = os.path.join(DIRPATH_ROOT, 'academia')
-FILEPATH_ACADEMIA_NOTES = os.path.join(DIRPATH_ACADEMIA, './academia-notes.md')
+FILEPATH_ACADEMIA_NOTES = os.path.join(DIRPATH_ACADEMIA, './notes.md')
+FILEPATH_ACADEMIA_HOMEWORK = os.path.join(DIRPATH_ACADEMIA, './homework.md')
+FILEPATH_ACADEMIA_NOTEBOOK = os.path.join(DIRPATH_ACADEMIA, './notebook.ipynb')
