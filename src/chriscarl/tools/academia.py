@@ -292,7 +292,7 @@ class Config:
             courses = []
             courses.extend(config.get('courses', []))
             courses = [Course(**kwargs) for kwargs in courses]
-            defaults = {}  # type: Dict[str, Any]
+            defaults = {}
             defaults.update(config.get('defaults', {}))
             return Config(courses=courses, defaults=defaults)
         return Config()
@@ -304,7 +304,7 @@ COLLECT_SECTIONS = {
     'hw': ['hw', 'todo'],
     'ideas': ['ideas', 'sidebar'],
     'glossary': ['glossary', 'terms'],
-    'questions': ['questions', 'problems'],
+    'questions': ['questions', 'problems', 'office hours'],
 }
 
 
@@ -390,9 +390,10 @@ class Arguments:
             'collect', formatter_class=ArgparseNiceFormat, help='accumulate all notes and extract the sections that would be good to view all at once...'
         )
         collect.add_argument('collect_sections', type=str, nargs='+', choices=COLLECT_SECTIONS, help='which sections to collect?')
-        collect.add_argument('--date-start', type=str, default=date_start, help='files created on or after this date?')
-        collect.add_argument('--date-end', type=str, default=date_end, help='files created on or before this date?')
+        collect.add_argument('--date-start', type=datetime_from_str, default=date_start, help='files created on or after this date?')
+        collect.add_argument('--date-end', type=datetime_from_str, default=date_end, help='files created on or before this date?')
         collect.add_argument('--inactive', action='store_true', help='search through inactive courses')
+        collect.add_argument('--course-key', type=str, choices=current_config.get_keys(), help=f'existing course by "dept-number" as key')
         cls.add_common_arguments(collect)
 
         return parser
@@ -508,7 +509,10 @@ def main():
 
         doclets, _, _, _, _ = markdown_to_doclets(academia_documents.FILEPATH_ACADEMIA_NOTES)
         template_content_erase = [doclet.content for doclet in doclets if doclet.section in {'any', 'list'}]
-        courses = cfg.get_inactive_courses() if args.inactive else cfg.get_active_courses()
+        if args.course_key:
+            courses = [cfg.get_course(args.course_key, active=not args.inactive)]
+        else:
+            courses = cfg.get_inactive_courses() if args.inactive else cfg.get_active_courses()
         accumulator = {}  # type: Dict[str, List[str]]
         for course in courses:
             course_key = course.to_key()
