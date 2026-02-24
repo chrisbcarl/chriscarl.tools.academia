@@ -85,7 +85,7 @@ academia = 'chriscarl.tools.academia:main'
 
 # poetry add package
 [tool.poetry.dependencies]
-chriscarl = {develop = true, path="../chriscarl.python"}  # version = ">0.0.0"
+chriscarl-tools-documents = {path = "../chriscarl.tools.documents", develop = true}
 
 
 [tool.poetry.group.dev.dependencies]  # poetry add package --group dev

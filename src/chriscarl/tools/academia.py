@@ -24,7 +24,11 @@ Examples:
     > academia collect hw ideas
 
 Updates:
+    2026-02-23 - tools.academia - added homework.md and notebook.ipynb
     2026-02-20 - tools.academia - initial commit
+
+TODO:
+    - author/email, maybe config
 '''
 
 # stdlib imports
@@ -36,6 +40,7 @@ import datetime
 from typing import List, Generator, Optional, Dict, Any
 from dataclasses import dataclass, field, fields, asdict
 from argparse import ArgumentParser
+from collections import OrderedDict
 import json
 import re
 
@@ -72,6 +77,8 @@ DEFAULT_OUTPUT_DIRPATH = abspath(TEMP_DIRPATH, 'tools.academia')
 DEFAULT_LOG_FILEPATH = abspath(TEMP_DIRPATH, 'tools.academia.log')
 
 # tool constants
+DEFAULT_AUTHOR = 'Chris Carl'
+DEFAULT_EMAIL = 'chris.carl@sjsu.edu'
 DEFAULT_DIRPATH = abspath(os.getcwd())
 DEFAULT_CONFIG_FILEPATH = abspath(DEFAULT_DIRPATH, 'tools.academia.cfg')
 DEFAULT_DEPARTMENT = 'DEPT'
@@ -282,14 +289,16 @@ class Config:
         # type: (str) -> Config
         if is_file(filepath):
             config = read_json(filepath)
-            courses = config.get('courses', [])
+            courses = []
+            courses.extend(config.get('courses', []))
             courses = [Course(**kwargs) for kwargs in courses]
-            defaults = config.get('defaults', {})
+            defaults = {}  # type: Dict[str, Any]
+            defaults.update(config.get('defaults', {}))
             return Config(courses=courses, defaults=defaults)
         return Config()
 
 
-DOC_TYPE = ['lecture', 'note', 'init']
+DOC_TYPE = ['lecture', 'note', 'init', 'hw', 'ipynb']
 COURSE_DIRNAMES = ['assignments', 'exams', 'lectures', 'notes', 'quizes', 'resources']
 COLLECT_SECTIONS = {
     'hw': ['hw', 'todo'],
@@ -350,17 +359,21 @@ class Arguments:
         config_subcommands = config.add_subparsers(title='config_mode', description='config subcommands', dest='config_mode')
         config_print = config_subcommands.add_parser('print', help='print the config')
         cls.add_common_arguments(config_print)
+
         config_add = config_subcommands.add_parser('add', help='add courses to the config, interractive if no key=value pairs')
         config_add.add_argument('config_tokens', type=str, nargs='*', help=f'key=value for any of these keys: {[fie.name for fie in fields(Course)]}')
         cls.add_common_arguments(config_add)
+
         config_set = config_subcommands.add_parser('set', help='set current courses')
         config_set.add_argument('course_key', type=str, choices=current_config.get_keys(), help=f'existing course by "dept-number" as key')
         config_set.add_argument('config_tokens', type=str, nargs='+', help=f'key=value for any of these keys: {[fie.name for fie in fields(Course)]}')
         config_set.add_argument('--inactive', action='store_true', help='search through inactive courses')
         cls.add_common_arguments(config_set)
+
         config_default = config_subcommands.add_parser('default', help='set global defaults for the courses')
-        cls.add_common_arguments(config_default)
         config_default.add_argument('config_tokens', type=str, nargs='+', help=f'key=value for any of these keys: {[fie.name for fie in fields(Course)]}')
+        cls.add_common_arguments(config_default)
+
         cls.add_common_arguments(config)
 
         new = subcommands.add_parser('new', formatter_class=ArgparseNiceFormat, help='create new notes/lectures, initialize, etc')
@@ -441,10 +454,43 @@ def main():
                 make_dirpath(new_dirpath)
                 LOGGER.info('created "%s"', new_dirpath)
         else:
-            template = read_text_file(academia_documents.FILEPATH_ACADEMIA_NOTES)
-            basename = f'{NOW.strftime("%Y-%m-%d")}.md'
-            output_dirpath = abspath(course_dirpath, f'{args.doc_type}s')  # note-s plural
+            SEMESTER_SHORT = course.semester[0].upper()
+            DATE = NOW.strftime("%Y-%m-%d")
+            filename = DATE
+            dirname = f'{args.doc_type}s'  # note-s plural
+            if args.doc_type == 'hw':
+                template = read_text_file(academia_documents.FILEPATH_ACADEMIA_HOMEWORK)
+                # YYYYX-INST-DEPT000A-hw_0B-chris_carl
+                filename = f'{course.year}{SEMESTER_SHORT}-{course.institution_abbrev}-{course.department}{course.number}-hw_0B-{"_".join([ele.lower() for ele in DEFAULT_AUTHOR.split()])}'
+                basename = f'{filename}.md'
+                dirname = 'assignments/hw_0B'
+            elif args.doc_type == 'ipynb':
+                template = read_text_file(academia_documents.FILEPATH_ACADEMIA_NOTEBOOK)
+                # YYYYX-INST-DEPT000A-hw_0B-chris_carl
+                filename = f'{course.year}{SEMESTER_SHORT}-{course.institution_abbrev}-{course.department}{course.number}-hw_0B-{"_".join([ele.lower() for ele in DEFAULT_AUTHOR.split()])}'
+                basename = f'{filename}.ipynb'
+                dirname = 'assignments/hw_0B'
+            else:
+                template = read_text_file(academia_documents.FILEPATH_ACADEMIA_NOTES)
+                basename = f'{filename}.md'
+
+            output_dirpath = abspath(course_dirpath, dirname)
             output_filepath = abspath(output_dirpath, basename)
+            tpls = [(k.upper(), v) for k, v in course.to_dict().items()]
+            tpls += [
+                ('AUTHOR', DEFAULT_AUTHOR),
+                ('EMAIL', DEFAULT_EMAIL),
+                ('SEMESTER_SHORT', SEMESTER_SHORT),
+                ('DATE', DATE),
+                ('TIME', NOW.strftime('%H:%M')),
+                ('HOMEWORK', filename),
+                ('DOCUMENT_FILEPATH', os.path.relpath(output_filepath, os.getcwd()).replace('\\', '/')),
+                ('DOCUMENT_DIRPATH', os.path.relpath(output_dirpath, os.getcwd()).replace('\\', '/')),
+            ]
+            kwargs = OrderedDict(sorted(tpls, key=lambda x: len(x[0]), reverse=True))
+            for k, v in kwargs.items():
+                template = template.replace(k, str(v))
+
             if is_file(output_filepath) and not args.overwrite:
                 raise OSError(f'"{basename}" {args.doc_type} exists for {course}! pass --overwrite')
             make_dirpath(output_dirpath)
