@@ -1,0 +1,1 @@
+- add automatic creation on the next class period based on sechedule, so you need MTWRF... maybe SaSu

@@ -48,7 +48,7 @@ from chriscarl.core.lib.stdlib.argparse import ArgparseNiceFormat
 from chriscarl.core.lib.stdlib.os import abspath, make_dirpath, dirpath, is_file, is_dir, walk_regex
 from chriscarl.core.lib.stdlib.io import read_text_file, write_text_file
 from chriscarl.core.lib.stdlib.json import read_json, write_json
-from chriscarl.core.lib.stdlib.datetime import NOW, get_start_of_week, get_start_of_day, get_end_of_day
+from chriscarl.core.lib.stdlib.datetime import NOW, get_start_of_week, get_start_of_day, get_end_of_day, from_str as datetime_from_str
 from chriscarl.core.lib.stdlib.subprocess import launch_editor
 from chriscarl.core.functors.parse.markdown import markdown_to_doclets
 from chriscarl.core.types.bool import boolean
@@ -295,6 +295,7 @@ COLLECT_SECTIONS = {
     'hw': ['hw', 'todo'],
     'ideas': ['ideas', 'sidebar'],
     'glossary': ['glossary', 'terms'],
+    'questions': ['questions', 'problems'],
 }
 
 
@@ -310,6 +311,7 @@ class Arguments:
     config_tokens: List[str] = field(default_factory=lambda: [])
     inactive: bool = False
     doc_type: str = ''
+    date_note: datetime.datetime = NOW
     overwrite: bool = False
     collect_sections: List[str] = field(default_factory=lambda: [])
     date_start: datetime.datetime = NOW
@@ -366,6 +368,7 @@ class Arguments:
         new = subcommands.add_parser('new', formatter_class=ArgparseNiceFormat, help='create new notes/lectures, initialize, etc')
         new.add_argument('doc_type', type=str, choices=DOC_TYPE, help='which type of new document?')
         new.add_argument('course_key', type=str, choices=current_config.get_keys(), help=f'existing course by "dept-number" as key')
+        new.add_argument('date_note', type=datetime_from_str, default=NOW.strftime('%Y-%m-%d'), help=f'date of the note you want to make')
         new.add_argument('--inactive', action='store_true', help='search through inactive courses')
         new.add_argument('--overwrite', action='store_true', help='overwrite existing?')
         cls.add_common_arguments(new)
@@ -442,7 +445,7 @@ def main():
                 LOGGER.info('created "%s"', new_dirpath)
         else:
             template = read_text_file(academia_documents.FILEPATH_ACADEMIA_NOTES)
-            basename = f'{NOW.strftime("%Y-%m-%d")}.md'
+            basename = f'{args.date_note.strftime("%Y-%m-%d")}.md'
             output_dirpath = abspath(course_dirpath, f'{args.doc_type}s')  # note-s plural
             output_filepath = abspath(output_dirpath, basename)
             if is_file(output_filepath) and not args.overwrite:
