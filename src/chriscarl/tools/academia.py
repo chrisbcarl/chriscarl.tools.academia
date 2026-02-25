@@ -381,7 +381,7 @@ class Arguments:
         new = subcommands.add_parser('new', formatter_class=ArgparseNiceFormat, help='create new notes/lectures, initialize, etc')
         new.add_argument('doc_type', type=str, choices=DOC_TYPE, help='which type of new document?')
         new.add_argument('course_key', type=str, choices=current_config.get_keys(), help=f'existing course by "dept-number" as key')
-        new.add_argument('date_note', type=datetime_from_str, default=get_start_of_day(NOW), help='date of the note you want to make')
+        new.add_argument('--date_note', type=datetime_from_str, default=get_start_of_day(NOW), help='date of the note you want to make')
         new.add_argument('--inactive', action='store_true', help='search through inactive courses')
         new.add_argument('--overwrite', action='store_true', help='overwrite existing?')
         cls.add_common_arguments(new)
@@ -496,7 +496,7 @@ def main():
                 template = template.replace(k, str(v))
 
             if is_file(output_filepath) and not args.overwrite:
-                raise OSError(f'"{basename}" {args.doc_type} exists for {course}! pass --overwrite')
+                raise OSError(f'"{basename}" {args.doc_type} exists for {course}! \n     "{output_filepath}"\n    pass --overwrite')
             make_dirpath(output_dirpath)
             write_text_file(output_filepath, template)
             LOGGER.info('wrote "%s"', output_filepath)
