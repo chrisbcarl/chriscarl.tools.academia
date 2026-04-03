@@ -27,7 +27,11 @@ Updates:
 
 Examples:
     md2pdf "DOCUMENT_FILEPATH" `
-        -o "DOCUMENT_DIRPATH/render" -ss
+        -o "DOCUMENT_DIRPATH/render" -ss -alc
+
+    pandoc "DOCUMENT_FILEPATH" `
+        --from=gfm --to=pdf --standalone --mathjax `
+        --output "DOCUMENT_DIRPATH/DOCUMENT_FILENAME.pdf"
 -->
 
 

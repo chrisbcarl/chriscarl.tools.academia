@@ -490,6 +490,7 @@ def main():
                 ('HOMEWORK', filename),
                 ('DOCUMENT_FILEPATH', os.path.relpath(output_filepath, os.getcwd()).replace('\\', '/')),
                 ('DOCUMENT_DIRPATH', os.path.relpath(output_dirpath, os.getcwd()).replace('\\', '/')),
+                ('DOCUMENT_FILENAME', os.path.splitext(os.path.basename(output_filepath))[0]),
             ]
             kwargs = OrderedDict(sorted(tpls, key=lambda x: len(x[0]), reverse=True))
             for k, v in kwargs.items():
