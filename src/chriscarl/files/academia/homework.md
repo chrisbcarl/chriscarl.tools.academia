@@ -31,6 +31,7 @@ Examples:
 
     pandoc "DOCUMENT_FILEPATH" `
         --from=gfm --to=pdf --standalone --mathjax `
+        --resource-path "DOCUMENT_DIRPATH" `
         --output "DOCUMENT_DIRPATH/DOCUMENT_FILENAME.pdf"
 -->
 
