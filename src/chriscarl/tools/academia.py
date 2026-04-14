@@ -24,6 +24,7 @@ Examples:
     > academia collect hw ideas
 
 Updates:
+    2026-04-13 - tools.academia - added explicit lecture/note
     2026-02-23 - tools.academia - added homework.md and notebook.ipynb
     2026-02-20 - tools.academia - initial commit
 
@@ -400,6 +401,8 @@ class Arguments:
 
     def process(self):
         make_dirpath(dirpath(self.config_filepath))
+        if self.date_end < self.date_start:
+            raise ValueError(f'--date-start > --date-end! {self.date_end} > {self.date_start}')
         if self.debug:
             self.log_level = 'DEBUG'
         configure_ez(level=self.log_level, filepath=self.log_filepath)
@@ -475,7 +478,12 @@ def main():
                 basename = f'{filename}.ipynb'
                 dirname = 'assignments/hw_0B'
             else:
-                template = read_text_file(academia_documents.FILEPATH_ACADEMIA_NOTES)
+                if args.doc_type == 'note':
+                    template = read_text_file(academia_documents.FILEPATH_ACADEMIA_NOTE)
+                elif args.doc_type == 'lecture':
+                    template = read_text_file(academia_documents.FILEPATH_ACADEMIA_LECTURE)
+                else:
+                    raise RuntimeError('we cant be here!')
                 basename = f'{filename}.md'
 
             output_dirpath = abspath(course_dirpath, dirname)

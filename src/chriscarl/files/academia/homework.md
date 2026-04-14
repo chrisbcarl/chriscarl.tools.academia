@@ -5,7 +5,9 @@ title: >
 subtitle:
 author: AUTHOR <EMAIL>
 toc: true
-geometry: "margin=1.5in"
+geometry:
+    - "margin=1.5in"
+    # - landscape
 template: "math"  # "chicago" "math"
 # ieee
 abstract: This is my submission of HOMEWORK of DEPARTMENT NUMBER at INSTITUTION_ABBREV instructed by Dr. INSTRUCTOR in SEMESTER YEAR.

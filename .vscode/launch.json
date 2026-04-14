@@ -25,5 +25,18 @@
             ],
             "justMyCode": true,
         },
+        {
+            "name": "[academia] SJSU_2026",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/chriscarl/tools/academia.py",
+            "console": "integratedTerminal",
+            "cwd": "C:/Users/chris/OneDrive/_recent/SJSU_2026S",
+            "args": [
+                "collect", "hw", "--date-start", "2026-04-30", "--course-key", "cmpe-180d",
+                // "--config-filepath", "ignoreme/config.json",
+            ],
+            "justMyCode": true,
+        },
     ]
 }

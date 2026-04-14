@@ -43,6 +43,7 @@ FILEPATH_ACADEMIA_DOCUMENTS_PY = os.path.join(DIRPATH_ROOT, 'academia_documents.
 
 # ./academia
 DIRPATH_ACADEMIA = os.path.join(DIRPATH_ROOT, 'academia')
-FILEPATH_ACADEMIA_NOTES = os.path.join(DIRPATH_ACADEMIA, './notes.md')
+FILEPATH_ACADEMIA_NOTE = os.path.join(DIRPATH_ACADEMIA, './note.md')
+FILEPATH_ACADEMIA_LECTURE = os.path.join(DIRPATH_ACADEMIA, './lecture.md')
 FILEPATH_ACADEMIA_HOMEWORK = os.path.join(DIRPATH_ACADEMIA, './homework.md')
 FILEPATH_ACADEMIA_NOTEBOOK = os.path.join(DIRPATH_ACADEMIA, './notebook.ipynb')
