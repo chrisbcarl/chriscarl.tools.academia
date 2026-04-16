@@ -32,7 +32,7 @@ Examples:
         -o "DOCUMENT_DIRPATH/render" -ss -alc
 
     pandoc "DOCUMENT_FILEPATH" `
-        --from=gfm --to=pdf --standalone --mathjax `
+        --from=gfm --to=pdf --standalone --mathjax --toc-depth=4 `
         --resource-path "DOCUMENT_DIRPATH" `
         --output "DOCUMENT_DIRPATH/DOCUMENT_FILENAME.pdf"
 -->
@@ -41,7 +41,7 @@ Examples:
 # Introduction - Ch. 1
 
 
-## Overview
+## Overview / Introductions:
 - Problem / Requirements: What is the thing "Y" that you're actually solving? 30000 ft level description.
 - Given / Presumptions: You have tools "A", "B", "C" already discovered, these are the pieces of the puzzle available to solve the problem.
 - Answer / Solutions: Invent an "X" - a thing that uses "A" + "B" in a novel way that achieves "Y"
@@ -51,39 +51,57 @@ Examples:
 - *term*: definitin or illustration
 
 
-## Concepts:
+## Systems / Concepts:
 - elaborate
 - on
 - the
+    - compare/contrast: strat1, strat2, strat3
+
+        |          |strategy1|strategy2|strategy3|
+        |---       |---      |---      |---      |
+        |dimension1|---      |---      |---      |
+        |dimension2|---      |---      |---      |
+        |dimension3|---      |---      |---      |
+        |dimension4|---      |---      |---      |
+        |dimension5|---      |---      |---      |
 - solution
 
 
 ## Examples / Questions:
-- A multiple choice question should be responded to in-line.
+
+### Multiple Choice
+- M1. A multiple choice question should be responded to in-line.
     - a) `[ ]` A only;
     - b) `[x]` B only;
     - c) `[ ]` A and B;
     - d) `[ ]` something else;
-- An essay type question
-    - can have user response
 
-        > with quotes if needed
+### Fill In the Blank
+- B1. Question text with `______` used for the blank and <u>underlined</u> for the answer.
 
-        Standalone and indented is perfectly fine
+### Essay
+#### E1: Question Topic
+An essay type question with the prompt here.
 
-        ```python
-        print('hello world')
-        ```
+- my response:
 
-    - can have an LLM repsonse
+    Standalone and indented is perfectly fine
 
-        > with quotes if needed
-        >> [chat link](https://www.example.com)
+    > with quotes if needed
 
-        Standalone and indented is perfectly fine
+    ```python
+    print('hello world')
+    ```
 
-        ```python
-        print('hello world')
-        ```
+- LLM-v0-Thinking response:
+
+    Standalone and indented is perfectly fine
+
+    > with quotes if needed
+    >> [chat link](https://www.example.com)
+
+    ```python
+    print('hello world')
+    ```
 
 

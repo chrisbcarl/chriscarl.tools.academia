@@ -7,7 +7,7 @@ Examples:
         -o "DOCUMENT_DIRPATH/render" -ss -alc
 
     pandoc "DOCUMENT_FILEPATH" `
-        --from=gfm --to=pdf --standalone --mathjax `
+        --from=gfm --to=pdf --standalone --mathjax --toc-depth=4 `
         --resource-path "DOCUMENT_DIRPATH" `
         --output "DOCUMENT_DIRPATH/DOCUMENT_FILENAME.pdf"
 -->
