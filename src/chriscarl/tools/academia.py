@@ -516,7 +516,7 @@ def main():
             LOGGER.error('cfg hasnt been configured yet at "%s"!', args.config_filepath)
             return 1
 
-        doclets, _, _, _, _ = markdown_to_doclets(academia_documents.FILEPATH_ACADEMIA_NOTES)
+        doclets, _, _, _, _ = markdown_to_doclets(academia_documents.FILEPATH_ACADEMIA_NOTE)
         template_content_erase = [doclet.content for doclet in doclets if doclet.section in {'any', 'list'}]
         if args.course_key:
             courses = [cfg.get_course(args.course_key, active=not args.inactive)]

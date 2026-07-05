@@ -69,36 +69,68 @@ Examples:
 
 ## Examples / Questions:
 
-### Multiple Choice
-- M1. A multiple choice question should be responded to in-line.
-    - a) `[ ]` A only;
-    - b) `[x]` B only;
-    - c) `[ ]` A and B;
-    - d) `[ ]` something else;
+### Acronyms
+
+|acronym|meaning           |
+|---    |---               |
+|ABC    |Alpha Beta Charlie|
+|DEF    |Delta Echo Foxtrot|
+|GHI    |Golf Hotel Indigo |
+|XYZ    |X-ray Yankee Zulu |
+
+### Definitions
+
+|term     |definition                |
+|---      |---                       |
+|Life     |The result of living      |
+|Liberty  |Freedom from and fredom to|
+|Happiness|Self-actualization        |
 
 ### Fill In the Blank
-- B1. Question text with `______` used for the blank and <u>underlined</u> for the answer.
+1. Question text with `______` used for the blank. Use <u>underlined</u> to replace `______` with the answer.
+2. A second fill in the `______`.
+
+### Multiple Choice
+1. A multiple choice question should be responded to in-line.
+    - (a) `[ ]` A only;
+    - (b) `[x]` B only;
+    - (c) `[ ]` A and B;
+    - (d) `[ ]` something else;
+2. A multi-choice multiple choice question.
+    - (a) `[ ]` A only;
+    - (b) `[ ]` B only;
+    - (c) `[x]` A and B;
+    - (d) `[x]` something else;
 
 ### Essay
-#### E1: Question Topic
+#### 1: Question Topic
 An essay type question with the prompt here.
+
+$$
+\text{Supplemental } \LaTeX \text{ example}
+$$
+
+```python
+# supplemental code example
+```
 
 - my response:
 
-    Standalone and indented is perfectly fine
+    Standalone and indented answer works.
 
     > with quotes if needed
+    >> [online resource](https://www.example.com)
 
     ```python
     print('hello world')
     ```
 
-- LLM-v0-Thinking response:
+- {model-name} {model-version} {model-extended-or-standard-thinking} response:
 
-    Standalone and indented is perfectly fine
+    Standalone and indented answer works.
 
     > with quotes if needed
-    >> [chat link](https://www.example.com)
+    >> [online resource](https://www.example.com)
 
     ```python
     print('hello world')
