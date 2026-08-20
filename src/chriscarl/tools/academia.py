@@ -24,13 +24,13 @@ Examples:
     > academia collect hw ideas
 
 Updates:
+    2026-08-20 - tools.academia - added hw auto-increment
     2026-08-19 - tools.academia - added HOMEWORK_SHORT, HOMEWORK_NICE to get some auto formatting in the title
     2026-04-13 - tools.academia - added explicit lecture/note
     2026-02-23 - tools.academia - added homework.md and notebook.ipynb
     2026-02-20 - tools.academia - initial commit
 
 TODO:
-    - hw auto-increment if using the HW0, HW1, HW2, HW10 approach
     - author/email, maybe config
 '''
 
@@ -88,6 +88,15 @@ DEFAULT_DEPARTMENT = 'DEPT'
 DEFAULT_NUMBER = '101'
 DEFAULT_TITLE = 'Introduction'
 SEMESTERS = ['Spring', 'Fall']
+
+DOC_TYPE = ['lecture', 'note', 'init', 'hw', 'ipynb']
+COURSE_DIRNAMES = ['assignments', 'exams', 'lectures', 'notes', 'quizes', 'resources']
+COLLECT_SECTIONS = {
+    'hw': ['hw', 'todo'],
+    'ideas': ['ideas', 'sidebar'],
+    'glossary': ['glossary', 'terms'],
+    'questions': ['questions', 'problems', 'office hours'],
+}
 
 
 @dataclass
@@ -152,6 +161,7 @@ class Course:
 class Config:
     courses: List[Course] = field(default_factory=lambda: [])
     defaults: Dict[str, Any] = field(default_factory=lambda: {})
+    filepath: str = DEFAULT_CONFIG_FILEPATH
 
     def add_course(self, course):
         # type: (Course) -> None
@@ -161,6 +171,10 @@ class Config:
                 raise KeyError(f'attempting to add duplicate course! {course}')
         except ValueError:
             pass
+
+        dirbase = os.path.dirname(self.filepath)
+        for dirname in COURSE_DIRNAMES:
+            make_dirpath(dirbase, course.to_key(), dirname)
 
         self.courses.append(course)
 
@@ -284,8 +298,8 @@ class Config:
     def to_dict(self):
         return asdict(self)
 
-    def save(self, filepath=DEFAULT_CONFIG_FILEPATH):
-        write_json(filepath, self.to_dict())
+    def save(self, filepath=''):
+        write_json(filepath or self.filepath, self.to_dict())
 
     @classmethod
     def load(cls, filepath=DEFAULT_CONFIG_FILEPATH):
@@ -295,20 +309,13 @@ class Config:
             courses = []
             courses.extend(config.get('courses', []))
             courses = [Course(**kwargs) for kwargs in courses]
-            defaults = {}
-            defaults.update(config.get('defaults', {}))
-            return Config(courses=courses, defaults=defaults)
+            defaults = config.get('defaults') or {}
+            if not isinstance(defaults, dict):
+                raise RuntimeError('did not expect defaults to not be of type dict...')
+            cfg = Config(courses=courses, defaults=defaults)
+            cfg.filepath = filepath
+            return cfg
         return Config()
-
-
-DOC_TYPE = ['lecture', 'note', 'init', 'hw', 'ipynb']
-COURSE_DIRNAMES = ['assignments', 'exams', 'lectures', 'notes', 'quizes', 'resources']
-COLLECT_SECTIONS = {
-    'hw': ['hw', 'todo'],
-    'ideas': ['ideas', 'sidebar'],
-    'glossary': ['glossary', 'terms'],
-    'questions': ['questions', 'problems', 'office hours'],
-}
 
 
 @dataclass
@@ -478,9 +485,16 @@ def main():
                     template = read_text_file(academia_documents.FILEPATH_ACADEMIA_NOTEBOOK)
                     extension = 'ipynb'
 
-                filename_short = 'HW_0B'
+                hw_max = -1
+                output_dirpath = abspath(course_dirpath, 'assignments')
+                if is_dir(output_dirpath):
+                    directories = [re.search(r'\d+', directory) for directory in os.listdir(output_dirpath)]
+                    if directories:
+                        hw_max = max([int(directory.group(0)) for directory in directories if directory is not None])
+
+                filename_short = f'HW{hw_max + 1}'
                 filename_nice = f'{course.year}{SEMESTER_SHORT} - {course.institution_abbrev} - {course.department} {course.number} - {filename_short} - {"_".join([ele.lower() for ele in DEFAULT_AUTHOR.split()])}'
-                # YYYYX-INST-DEPT000A-hw_0B-chris_carl
+                # YYYYX-INST-DEPT000A-hw0-chris_carl
                 filename = filename_nice.replace(' ', '')
                 basename = f'{filename}.{extension}'
                 dirname = f'assignments/{filename_short.lower()}'
