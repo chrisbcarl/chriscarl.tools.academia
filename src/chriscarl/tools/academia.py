@@ -24,11 +24,13 @@ Examples:
     > academia collect hw ideas
 
 Updates:
+    2026-08-19 - tools.academia - added HOMEWORK_SHORT, HOMEWORK_NICE to get some auto formatting in the title
     2026-04-13 - tools.academia - added explicit lecture/note
     2026-02-23 - tools.academia - added homework.md and notebook.ipynb
     2026-02-20 - tools.academia - initial commit
 
 TODO:
+    - hw auto-increment if using the HW0, HW1, HW2, HW10 approach
     - author/email, maybe config
 '''
 
@@ -465,18 +467,23 @@ def main():
             DATE = args.date_note.strftime("%Y-%m-%d")
             filename = DATE
             dirname = f'{args.doc_type}s'  # note-s plural
-            if args.doc_type == 'hw':
-                template = read_text_file(academia_documents.FILEPATH_ACADEMIA_HOMEWORK)
+            filename_short = ''
+            filename_nice = ''
+            if args.doc_type in ['hw', 'ipynb']:
+                extension = 'md'
+                template = ''
+                if args.doc_type == 'hw':
+                    template = read_text_file(academia_documents.FILEPATH_ACADEMIA_HOMEWORK)
+                if args.doc_type == 'ipynb':
+                    template = read_text_file(academia_documents.FILEPATH_ACADEMIA_NOTEBOOK)
+                    extension = 'ipynb'
+
+                filename_short = 'HW_0B'
+                filename_nice = f'{course.year}{SEMESTER_SHORT} - {course.institution_abbrev} - {course.department} {course.number} - {filename_short} - {"_".join([ele.lower() for ele in DEFAULT_AUTHOR.split()])}'
                 # YYYYX-INST-DEPT000A-hw_0B-chris_carl
-                filename = f'{course.year}{SEMESTER_SHORT}-{course.institution_abbrev}-{course.department}{course.number}-hw_0B-{"_".join([ele.lower() for ele in DEFAULT_AUTHOR.split()])}'
-                basename = f'{filename}.md'
-                dirname = 'assignments/hw_0B'
-            elif args.doc_type == 'ipynb':
-                template = read_text_file(academia_documents.FILEPATH_ACADEMIA_NOTEBOOK)
-                # YYYYX-INST-DEPT000A-hw_0B-chris_carl
-                filename = f'{course.year}{SEMESTER_SHORT}-{course.institution_abbrev}-{course.department}{course.number}-hw_0B-{"_".join([ele.lower() for ele in DEFAULT_AUTHOR.split()])}'
-                basename = f'{filename}.ipynb'
-                dirname = 'assignments/hw_0B'
+                filename = filename_nice.replace(' ', '')
+                basename = f'{filename}.{extension}'
+                dirname = f'assignments/{filename_short.lower()}'
             else:
                 if args.doc_type == 'note':
                     template = read_text_file(academia_documents.FILEPATH_ACADEMIA_NOTE)
@@ -496,6 +503,8 @@ def main():
                 ('DATE', DATE),
                 ('TIME', NOW.strftime('%H:%M')),
                 ('HOMEWORK', filename),
+                ('HOMEWORK_SHORT', filename_short),
+                ('HOMEWORK_NICE', filename_nice),
                 ('DOCUMENT_FILEPATH', os.path.relpath(output_filepath, os.getcwd()).replace('\\', '/')),
                 ('DOCUMENT_DIRPATH', os.path.relpath(output_dirpath, os.getcwd()).replace('\\', '/')),
                 ('DOCUMENT_FILENAME', os.path.splitext(os.path.basename(output_filepath))[0]),

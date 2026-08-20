@@ -1,7 +1,7 @@
 ---
 header-includes: |
 title: >
-  HOMEWORK
+  HOMEWORK_NICE
 subtitle:
 author: AUTHOR <EMAIL>
 toc: true
@@ -10,7 +10,7 @@ geometry:
     # - landscape
 template: "math"  # "chicago" "math"
 # ieee
-abstract: This is my submission of HOMEWORK of DEPARTMENT NUMBER at INSTITUTION_ABBREV instructed by Dr. INSTRUCTOR in SEMESTER YEAR.
+abstract: This is my submission of HOMEWORK_SHORT of DEPARTMENT NUMBER at INSTITUTION_ABBREV instructed by Dr. INSTRUCTOR in SEMESTER YEAR.
 keywords: normal distribution, exponential distribution, random variables
 # custom
 doublespaced: false
