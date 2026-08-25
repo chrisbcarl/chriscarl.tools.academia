@@ -24,6 +24,7 @@ Examples:
     > academia collect hw ideas
 
 Updates:
+    2026-08-24 - tools.academia - added quiz type and simplified index calculation to a func
     2026-08-20 - tools.academia - added hw auto-increment
     2026-08-19 - tools.academia - added HOMEWORK_SHORT, HOMEWORK_NICE to get some auto formatting in the title
     2026-04-13 - tools.academia - added explicit lecture/note
@@ -89,13 +90,14 @@ DEFAULT_NUMBER = '101'
 DEFAULT_TITLE = 'Introduction'
 SEMESTERS = ['Spring', 'Fall']
 
-DOC_TYPE = ['lecture', 'note', 'init', 'hw', 'ipynb']
+DOC_TYPE = ['lecture', 'note', 'init', 'hw', 'ipynb', 'quiz']
 COURSE_DIRNAMES = ['assignments', 'exams', 'lectures', 'notes', 'quizes', 'resources']
 COLLECT_SECTIONS = {
     'hw': ['hw', 'todo'],
     'ideas': ['ideas', 'sidebar'],
     'glossary': ['glossary', 'terms'],
     'questions': ['questions', 'problems', 'office hours'],
+    'quiz': ['quiz'],
 }
 
 
@@ -429,6 +431,19 @@ class Arguments:
         return {fie.name: getattr(self, fie.name) for fie in fields(self)}
 
 
+def get_number_index_from_dirpath(dirpath):
+    # type: (str) -> int
+    index = -1
+    if is_dir(dirpath):
+        directories = [re.search(r'\d+', directory) for directory in os.listdir(dirpath)]
+        if directories:
+            indicies = [int(directory.group(0)) for directory in directories if directory is not None]
+            if indicies:
+                index = max(indicies)
+    return index
+
+
+
 def main():
     # type: () -> int
     parser = Arguments.argparser()
@@ -476,28 +491,33 @@ def main():
             dirname = f'{args.doc_type}s'  # note-s plural
             filename_short = ''
             filename_nice = ''
-            if args.doc_type in ['hw', 'ipynb']:
+            index = -1
+            if args.doc_type in ['hw', 'ipynb', 'quiz']:
                 extension = 'md'
                 template = ''
-                if args.doc_type == 'hw':
-                    template = read_text_file(academia_documents.FILEPATH_ACADEMIA_HOMEWORK)
-                if args.doc_type == 'ipynb':
-                    template = read_text_file(academia_documents.FILEPATH_ACADEMIA_NOTEBOOK)
-                    extension = 'ipynb'
+                if args.doc_type == 'quiz':
+                    dirname = 'quizes'
+                    output_dirpath = abspath(course_dirpath, dirname)
+                    index = get_number_index_from_dirpath(output_dirpath) + 1
+                    template = read_text_file(academia_documents.FILEPATH_ACADEMIA_QUIZ)
+                    filename = f'quiz-{index}'
+                    basename = f'{filename}.md'
+                else:
+                    if args.doc_type == 'hw':
+                        template = read_text_file(academia_documents.FILEPATH_ACADEMIA_HOMEWORK)
+                    if args.doc_type == 'ipynb':
+                        template = read_text_file(academia_documents.FILEPATH_ACADEMIA_NOTEBOOK)
+                        extension = 'ipynb'
 
-                hw_max = -1
-                output_dirpath = abspath(course_dirpath, 'assignments')
-                if is_dir(output_dirpath):
-                    directories = [re.search(r'\d+', directory) for directory in os.listdir(output_dirpath)]
-                    if directories:
-                        hw_max = max([int(directory.group(0)) for directory in directories if directory is not None])
+                    output_dirpath = abspath(course_dirpath, 'assignments')
+                    index = get_number_index_from_dirpath(output_dirpath) + 1
 
-                filename_short = f'HW{hw_max + 1}'
-                filename_nice = f'{course.year}{SEMESTER_SHORT} - {course.institution_abbrev} - {course.department} {course.number} - {filename_short} - {"_".join([ele.lower() for ele in DEFAULT_AUTHOR.split()])}'
-                # YYYYX-INST-DEPT000A-hw0-chris_carl
-                filename = filename_nice.replace(' ', '')
-                basename = f'{filename}.{extension}'
-                dirname = f'assignments/{filename_short.lower()}'
+                    filename_short = f'HW{index}'
+                    filename_nice = f'{course.year}{SEMESTER_SHORT} - {course.institution_abbrev} - {course.department} {course.number} - {filename_short} - {"_".join([ele.lower() for ele in DEFAULT_AUTHOR.split()])}'
+                    # YYYYX-INST-DEPT000A-hw0-chris_carl
+                    filename = filename_nice.replace(' ', '')
+                    basename = f'{filename}.{extension}'
+                    dirname = f'assignments/{filename_short.lower()}'
             else:
                 if args.doc_type == 'note':
                     template = read_text_file(academia_documents.FILEPATH_ACADEMIA_NOTE)
@@ -511,6 +531,7 @@ def main():
             output_filepath = abspath(output_dirpath, basename)
             tpls = [(k.upper(), v) for k, v in course.to_dict().items()]
             tpls += [
+                ('INDEX', index),
                 ('AUTHOR', DEFAULT_AUTHOR),
                 ('EMAIL', DEFAULT_EMAIL),
                 ('SEMESTER_SHORT', SEMESTER_SHORT),
