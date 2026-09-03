@@ -24,6 +24,7 @@ Examples:
     > academia collect hw ideas
 
 Updates:
+    2026-09-03 - tools.academia - added lab type, added index-start and index override
     2026-08-24 - tools.academia - added quiz type and simplified index calculation to a func
     2026-08-20 - tools.academia - added hw auto-increment
     2026-08-19 - tools.academia - added HOMEWORK_SHORT, HOMEWORK_NICE to get some auto formatting in the title
@@ -90,7 +91,7 @@ DEFAULT_NUMBER = '101'
 DEFAULT_TITLE = 'Introduction'
 SEMESTERS = ['Spring', 'Fall']
 
-DOC_TYPE = ['lecture', 'note', 'init', 'hw', 'ipynb', 'quiz']
+DOC_TYPE = ['lecture', 'note', 'init', 'hw', 'lab', 'ipynb', 'quiz']
 COURSE_DIRNAMES = ['assignments', 'exams', 'lectures', 'notes', 'quizes', 'resources']
 COLLECT_SECTIONS = {
     'hw': ['hw', 'todo'],
@@ -337,6 +338,8 @@ class Arguments:
     collect_sections: List[str] = field(default_factory=lambda: [])
     date_start: datetime.datetime = NOW
     date_end: datetime.datetime = NOW
+    index_start: int = 0
+    index: int = -1
     # settings
     config_filepath: str = DEFAULT_CONFIG_FILEPATH
     dirpath: str = DEFAULT_DIRPATH
@@ -394,6 +397,8 @@ class Arguments:
         new.add_argument('doc_type', type=str, choices=DOC_TYPE, help='which type of new document?')
         new.add_argument('course_key', type=str, choices=current_config.get_keys(), help=f'existing course by "dept-number" as key')
         new.add_argument('--date_note', type=datetime_from_str, default=get_start_of_day(NOW), help='date of the note you want to make')
+        new.add_argument('--index-start', type=int, default=0, help='create files starting from this index (used if non yet exist)')
+        new.add_argument('--index', type=int, default=-1, help='if set, override the index number')
         new.add_argument('--inactive', action='store_true', help='search through inactive courses')
         new.add_argument('--overwrite', action='store_true', help='overwrite existing?')
         cls.add_common_arguments(new)
@@ -431,15 +436,15 @@ class Arguments:
         return {fie.name: getattr(self, fie.name) for fie in fields(self)}
 
 
-def get_number_index_from_dirpath(dirpath):
-    # type: (str) -> int
-    index = -1
+def get_number_index_from_dirpath(prepend, dirpath, default=0):
+    # type: (str, str, int) -> int
+    index = default
     if is_dir(dirpath):
-        directories = [re.search(r'\d+', directory) for directory in os.listdir(dirpath)]
+        directories = [re.search(rf'{prepend}\d+', directory, flags=re.IGNORECASE) for directory in os.listdir(dirpath)]
         if directories:
             indicies = [int(directory.group(0)) for directory in directories if directory is not None]
             if indicies:
-                index = max(indicies)
+                index = max(indicies) + 1
     return index
 
 
@@ -491,28 +496,28 @@ def main():
             dirname = f'{args.doc_type}s'  # note-s plural
             filename_short = ''
             filename_nice = ''
-            index = -1
-            if args.doc_type in ['hw', 'ipynb', 'quiz']:
+            index = args.index
+            if args.doc_type in ['hw', 'lab', 'ipynb', 'quiz']:
                 extension = 'md'
                 template = ''
                 if args.doc_type == 'quiz':
                     dirname = 'quizes'
                     output_dirpath = abspath(course_dirpath, dirname)
-                    index = get_number_index_from_dirpath(output_dirpath) + 1
+                    index = index if index != -1 else get_number_index_from_dirpath(args.doc_type, output_dirpath, default=args.index_start)
                     template = read_text_file(academia_documents.FILEPATH_ACADEMIA_QUIZ)
                     filename = f'quiz-{index}'
                     basename = f'{filename}.md'
                 else:
-                    if args.doc_type == 'hw':
+                    if args.doc_type in ['hw', 'lab']:
                         template = read_text_file(academia_documents.FILEPATH_ACADEMIA_HOMEWORK)
-                    if args.doc_type == 'ipynb':
+                    elif args.doc_type == 'ipynb':
                         template = read_text_file(academia_documents.FILEPATH_ACADEMIA_NOTEBOOK)
                         extension = 'ipynb'
 
                     output_dirpath = abspath(course_dirpath, 'assignments')
-                    index = get_number_index_from_dirpath(output_dirpath) + 1
+                    index = index if index != -1 else get_number_index_from_dirpath(args.doc_type, output_dirpath, default=args.index_start)
 
-                    filename_short = f'HW{index}'
+                    filename_short = f'{args.doc_type.upper()}{index}'
                     filename_nice = f'{course.year}{SEMESTER_SHORT} - {course.institution_abbrev} - {course.department} {course.number} - {filename_short} - {"_".join([ele.lower() for ele in DEFAULT_AUTHOR.split()])}'
                     # YYYYX-INST-DEPT000A-hw0-chris_carl
                     filename = filename_nice.replace(' ', '')
