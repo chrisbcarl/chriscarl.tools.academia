@@ -24,6 +24,7 @@ Examples:
     > academia collect hw ideas
 
 Updates:
+    2026-09-09 - tools.academia - birthday codeeee, added explicit naming and explicit index-override
     2026-09-03 - tools.academia - added lab type, added index-start and index override
     2026-08-24 - tools.academia - added quiz type and simplified index calculation to a func
     2026-08-20 - tools.academia - added hw auto-increment
@@ -338,6 +339,7 @@ class Arguments:
     collect_sections: List[str] = field(default_factory=lambda: [])
     date_start: datetime.datetime = NOW
     date_end: datetime.datetime = NOW
+    filename: str = ''
     index_start: int = 0
     index: int = -1
     # settings
@@ -397,6 +399,7 @@ class Arguments:
         new.add_argument('doc_type', type=str, choices=DOC_TYPE, help='which type of new document?')
         new.add_argument('course_key', type=str, choices=current_config.get_keys(), help=f'existing course by "dept-number" as key')
         new.add_argument('--date_note', type=datetime_from_str, default=get_start_of_day(NOW), help='date of the note you want to make')
+        new.add_argument('--filename', '-f', type=str, help='explicitly set a file name instead of relying on dates and other auto-mechanisms')
         new.add_argument('--index-start', type=int, default=0, help='create files starting from this index (used if non yet exist)')
         new.add_argument('--index', type=int, default=-1, help='if set, override the index number')
         new.add_argument('--inactive', action='store_true', help='search through inactive courses')
@@ -440,9 +443,10 @@ def get_number_index_from_dirpath(prepend, dirpath, default=0):
     # type: (str, str, int) -> int
     index = default
     if is_dir(dirpath):
-        directories = [re.search(rf'{prepend}\d+', directory, flags=re.IGNORECASE) for directory in os.listdir(dirpath)]
+        print(rf'{prepend}(\d+)')
+        directories = [re.search(rf'{prepend}(\d+)', directory, flags=re.IGNORECASE) for directory in os.listdir(dirpath)]
         if directories:
-            indicies = [int(directory.group(0)) for directory in directories if directory is not None]
+            indicies = [int(directory.group(1)) for directory in directories if directory is not None]
             if indicies:
                 index = max(indicies) + 1
     return index
@@ -492,7 +496,7 @@ def main():
         else:
             SEMESTER_SHORT = course.semester[0].upper()
             DATE = args.date_note.strftime("%Y-%m-%d")
-            filename = DATE
+            filename = args.filename or DATE
             dirname = f'{args.doc_type}s'  # note-s plural
             filename_short = ''
             filename_nice = ''
@@ -504,8 +508,10 @@ def main():
                     dirname = 'quizes'
                     output_dirpath = abspath(course_dirpath, dirname)
                     index = index if index != -1 else get_number_index_from_dirpath(args.doc_type, output_dirpath, default=args.index_start)
+                    if args.overwrite:
+                        index -= 1
                     template = read_text_file(academia_documents.FILEPATH_ACADEMIA_QUIZ)
-                    filename = f'quiz-{index}'
+                    filename = f'quiz-{index}' if not args.filename else args.filename
                     basename = f'{filename}.md'
                 else:
                     if args.doc_type in ['hw', 'lab']:
@@ -516,11 +522,13 @@ def main():
 
                     output_dirpath = abspath(course_dirpath, 'assignments')
                     index = index if index != -1 else get_number_index_from_dirpath(args.doc_type, output_dirpath, default=args.index_start)
+                    if args.overwrite:
+                        index -= 1
 
                     filename_short = f'{args.doc_type.upper()}{index}'
                     filename_nice = f'{course.year}{SEMESTER_SHORT} - {course.institution_abbrev} - {course.department} {course.number} - {filename_short} - {"_".join([ele.lower() for ele in DEFAULT_AUTHOR.split()])}'
                     # YYYYX-INST-DEPT000A-hw0-chris_carl
-                    filename = filename_nice.replace(' ', '')
+                    filename = filename_nice.replace(' ', '') if not args.filename else args.filename
                     basename = f'{filename}.{extension}'
                     dirname = f'assignments/{filename_short.lower()}'
             else:
