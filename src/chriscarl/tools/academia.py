@@ -24,6 +24,7 @@ Examples:
     > academia collect hw ideas
 
 Updates:
+    2026-09-14 - tools.academia - filename override wasnt applied to the dirpath, fixed
     2026-09-09 - tools.academia - birthday codeeee, added explicit naming and explicit index-override
     2026-09-03 - tools.academia - added lab type, added index-start and index override
     2026-08-24 - tools.academia - added quiz type and simplified index calculation to a func
@@ -525,7 +526,7 @@ def main():
                     if args.overwrite:
                         index -= 1
 
-                    filename_short = f'{args.doc_type.upper()}{index}'
+                    filename_short = args.filename or f'{args.doc_type.upper()}{index}'
                     filename_nice = f'{course.year}{SEMESTER_SHORT} - {course.institution_abbrev} - {course.department} {course.number} - {filename_short} - {"_".join([ele.lower() for ele in DEFAULT_AUTHOR.split()])}'
                     # YYYYX-INST-DEPT000A-hw0-chris_carl
                     filename = filename_nice.replace(' ', '') if not args.filename else args.filename
