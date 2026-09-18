@@ -4,6 +4,7 @@ title: >
   NOTE
 subtitle:
 author: AUTHOR <EMAIL>
+date: DATE
 toc: true
 geometry:
     - "margin=0.25in"

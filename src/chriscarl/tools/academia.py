@@ -24,6 +24,7 @@ Examples:
     > academia collect hw ideas
 
 Updates:
+    2026-09-17 - tools.academia - added date, not sure why took so long
     2026-09-14 - tools.academia - filename override wasnt applied to the dirpath, fixed
     2026-09-09 - tools.academia - birthday codeeee, added explicit naming and explicit index-override
     2026-09-03 - tools.academia - added lab type, added index-start and index override
@@ -86,6 +87,7 @@ DEFAULT_LOG_FILEPATH = abspath(TEMP_DIRPATH, 'tools.academia.log')
 # tool constants
 DEFAULT_AUTHOR = 'Chris Carl'
 DEFAULT_EMAIL = 'chris.carl@sjsu.edu'
+DEFAULT_DATE = NOW.strftime('%y-%m-%d')
 DEFAULT_DIRPATH = abspath(os.getcwd())
 DEFAULT_CONFIG_FILEPATH = abspath(DEFAULT_DIRPATH, 'tools.academia.cfg')
 DEFAULT_DEPARTMENT = 'DEPT'
@@ -547,6 +549,7 @@ def main():
             tpls += [
                 ('INDEX', index),
                 ('AUTHOR', DEFAULT_AUTHOR),
+                ('DATE', DEFAULT_DATE),
                 ('EMAIL', DEFAULT_EMAIL),
                 ('SEMESTER_SHORT', SEMESTER_SHORT),
                 ('DATE', DATE),

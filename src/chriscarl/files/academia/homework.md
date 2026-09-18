@@ -4,6 +4,7 @@ title: >
   HOMEWORK_NICE
 subtitle:
 author: AUTHOR <EMAIL>
+date: DATE
 toc: true
 geometry:
     - "margin=1.5in"
