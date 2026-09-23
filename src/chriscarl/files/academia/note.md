@@ -68,6 +68,11 @@ Examples:
 - solution
 
 
+## Important - MUST Remember FOREVER
+- the sun rises in the east, sets in the west
+- boolean function count on k inputs: $2^{2^{k}}$
+
+
 ## Examples / Questions:
 
 ### Acronyms

@@ -549,7 +549,6 @@ def main():
             tpls += [
                 ('INDEX', index),
                 ('AUTHOR', DEFAULT_AUTHOR),
-                ('DATE', DEFAULT_DATE),
                 ('EMAIL', DEFAULT_EMAIL),
                 ('SEMESTER_SHORT', SEMESTER_SHORT),
                 ('DATE', DATE),
