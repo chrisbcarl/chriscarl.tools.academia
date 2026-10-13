@@ -24,6 +24,7 @@ Examples:
     > academia collect hw ideas
 
 Updates:
+    2026-10-12 - tools.academia - removed my name from the output titles since i'm an author anyway
     2026-09-17 - tools.academia - added date, not sure why took so long
     2026-09-14 - tools.academia - filename override wasnt applied to the dirpath, fixed
     2026-09-09 - tools.academia - birthday codeeee, added explicit naming and explicit index-override
@@ -455,7 +456,6 @@ def get_number_index_from_dirpath(prepend, dirpath, default=0):
     return index
 
 
-
 def main():
     # type: () -> int
     parser = Arguments.argparser()
@@ -529,7 +529,8 @@ def main():
                         index -= 1
 
                     filename_short = args.filename or f'{args.doc_type.upper()}{index}'
-                    filename_nice = f'{course.year}{SEMESTER_SHORT} - {course.institution_abbrev} - {course.department} {course.number} - {filename_short} - {"_".join([ele.lower() for ele in DEFAULT_AUTHOR.split()])}'
+                    #  - {"_".join([ele.lower() for ele in DEFAULT_AUTHOR.split()])}  # having the name in there is a bit obtuse
+                    filename_nice = f'{course.year}{SEMESTER_SHORT} - {course.institution_abbrev} - {course.department} {course.number} - {filename_short}'
                     # YYYYX-INST-DEPT000A-hw0-chris_carl
                     filename = filename_nice.replace(' ', '') if not args.filename else args.filename
                     basename = f'{filename}.{extension}'
